@@ -1,9 +1,10 @@
-// import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import { AuthContext } from "../../auth/context/AuthContext";
+import React, { useEffect, useState, useContext } from "react";
 import { View, Button, TextInput, Text } from "react-native";
 
 function Login({ navigation }: any) {
-  // const navigation = useNavigation();
+  const { userToken, logIn, isLoading } = useContext(AuthContext);
+  console.log(userToken, "auth");
   const [formData, setFormData] = useState({
     name: "",
     password: "",
@@ -26,10 +27,14 @@ function Login({ navigation }: any) {
   };
 
   const handleNavigation = () => {
-    navigation.navigate("Home", {
-      name: formData.name,
-      password: formData.password,
-    });
+    console.log(userToken, "login");
+    if (userToken) {
+      navigation.navigate("Home", {
+        name: formData.name,
+        password: formData.password,
+      });
+    }
+    navigation.navigate("SignUp");
   };
 
   return (
@@ -44,7 +49,16 @@ function Login({ navigation }: any) {
         onChangeText={(value) => handleChange("password", value)}
         value={formData.password}
       />
-      <Button title="Go to Home Page" onPress={handleNavigation} />
+      <View className="flex flex-col gap-10 mt-10">
+        <Button title="Sign in" onPress={handleNavigation} />
+        <Button
+          title="Log in"
+          onPress={() => {
+            logIn();
+            handleNavigation();
+          }}
+        />
+      </View>
     </View>
   );
 }
